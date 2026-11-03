@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './ui/poli_page.dart';
+import 'ui/poli/poli_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Klinik Apps',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
       ),
       home: const PoliPage(),
     );
