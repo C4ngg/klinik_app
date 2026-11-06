@@ -19,7 +19,7 @@ class Sidebar extends StatelessWidget {
             accountEmail: Text("admin@admin.com"),
           ),
           ListTile(
-            leading: Icon(Icons.home),
+            leading: Icon(Icons.home_outlined),
             title: Text("Beranda"),
             onTap: () {
               Navigator.push(
@@ -29,7 +29,7 @@ class Sidebar extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.accessible),
+            leading: Icon(Icons.local_hospital_outlined),
             title: Text("Poli"),
             onTap: () {
               Navigator.push(
@@ -39,7 +39,7 @@ class Sidebar extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.people),
+            leading: Icon(Icons.badge_outlined),
             title: Text("Pegawai"),
             onTap: () {
               Navigator.push(
@@ -49,7 +49,7 @@ class Sidebar extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.account_box_sharp),
+            leading: Icon(Icons.person_outline),
             title: Text("Pasien"),
             onTap: () {
               Navigator.push(context,

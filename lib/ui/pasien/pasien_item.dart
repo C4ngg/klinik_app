@@ -1,35 +1,44 @@
 import 'package:flutter/material.dart';
+
 import '../../model/pasien.dart';
 import 'pasien_detail.dart';
 
 class PasienItem extends StatelessWidget {
-  final Pasien pasien;
-  final void Function(Pasien) onUbah;
-  final void Function(Pasien) onHapus;
-
   const PasienItem({
-    Key? key,
+    super.key,
     required this.pasien,
     required this.onUbah,
     required this.onHapus,
-  }) : super(key: key);
+  });
+
+  final Pasien pasien;
+  final ValueChanged<Pasien> onUbah;
+  final ValueChanged<Pasien> onHapus;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Card(
-        child: ListTile(
-          title: Text("${pasien.nama}"),
-          subtitle: Text("No. RM: ${pasien.nomorRm}"),
+    return Card(
+      color: Colors.white,
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: Colors.teal.shade100,
+          foregroundColor: Colors.teal.shade800,
+          child: const Icon(Icons.person_outline),
+        ),
+        title: Text(pasien.nama),
+        subtitle: Text('No. RM: ${pasien.nomorRm}'),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PasienDetail(
+              pasien: pasien,
+              onUbah: onUbah,
+              onHapus: onHapus,
+            ),
+          ),
         ),
       ),
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => PasienDetail(
-                    pasien: pasien, onUbah: onUbah, onHapus: onHapus)));
-      },
     );
   }
 }

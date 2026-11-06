@@ -1,98 +1,85 @@
 import 'package:flutter/material.dart';
 
-import 'poli_page.dart';
-import 'poli_update_form.dart';
 import '../../model/poli.dart';
+import 'poli_update_form.dart';
 
-class PoliDetail extends StatefulWidget {
+class PoliDetail extends StatelessWidget {
+  const PoliDetail({
+    super.key,
+    required this.poli,
+    required this.onDeleted,
+  });
+
   final Poli poli;
+  final VoidCallback onDeleted;
 
-  const PoliDetail({super.key, required this.poli});
-
-  @override
-  State<PoliDetail> createState() => _PoliDetailState();
-}
-
-class _PoliDetailState extends State<PoliDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Detail Poli"),
-        backgroundColor: Colors.blueAccent,
-        titleTextStyle: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold,
-        ),
+        title: const Text('Detail Poli'),
+        backgroundColor: Colors.blue.shade700,
+        foregroundColor: Colors.white,
       ),
-      body: Column(
+      body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          SizedBox(height: 20),
-          Text(
-            "Nama Poli : ${widget.poli.namaPoli}",
-            style: TextStyle(fontSize: 20),
+          ListTile(
+            leading: const Icon(Icons.local_hospital_outlined),
+            title: const Text('Nama Poli'),
+            subtitle: Text(poli.namaPoli),
           ),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [_tombolUbah(), _tombolHapus()],
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.blue.shade700,
+            ),
+            onPressed: () async {
+              final updated = await Navigator.push<Poli>(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PoliUpdateForm(poli: poli),
+                ),
+              );
+              if (updated != null && context.mounted) {
+                Navigator.pop(context, updated);
+              }
+            },
+            icon: const Icon(Icons.edit),
+            label: const Text('Ubah'),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red.shade700,
+            ),
+            onPressed: () async {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Hapus Poli'),
+                  content: const Text('Yakin ingin menghapus data ini?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Batal'),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('Hapus'),
+                    ),
+                  ],
+                ),
+              );
+              if (confirmed == true && context.mounted) {
+                onDeleted();
+                Navigator.pop(context);
+              }
+            },
+            icon: const Icon(Icons.delete),
+            label: const Text('Hapus'),
           ),
         ],
       ),
-    );
-  }
-
-  _tombolUbah() {
-    return ElevatedButton(
-      onPressed: () async {
-        final poli = await Navigator.push<Poli>(
-          context,
-          MaterialPageRoute(
-            builder: (context) => PoliUpdateForm(poli: widget.poli),
-          ),
-        );
-        if (poli != null) {
-          Navigator.pop(context, poli);
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        foregroundColor: Colors.white,
-      ),
-      child: const Text("Ubah"),
-    );
-  }
-
-  _tombolHapus() {
-    return ElevatedButton(
-      onPressed: () {
-        AlertDialog alertDialog = AlertDialog(
-          content: const Text("Yakin ingin menghapus data ini?"),
-          actions: [
-            // tombol ya
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => PoliPage()),
-                );
-              },
-              child: const Text("Ya"),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
-            ),
-            // tombol batal
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("Tidak"),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-            ),
-          ],
-        );
-        showDialog(context: context, builder: (context) => alertDialog);
-      },
-      style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-      child: const Text("Hapus"),
     );
   }
 }

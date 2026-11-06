@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+
 import '../../model/pasien.dart';
 import 'pasien_update_form.dart';
 
 class PasienDetail extends StatefulWidget {
-  final Pasien pasien;
-  final void Function(Pasien) onUbah;
-  final void Function(Pasien) onHapus;
-
   const PasienDetail({
-    Key? key,
+    super.key,
     required this.pasien,
     required this.onUbah,
     required this.onHapus,
-  }) : super(key: key);
+  });
+
+  final Pasien pasien;
+  final ValueChanged<Pasien> onUbah;
+  final ValueChanged<Pasien> onHapus;
 
   @override
   State<PasienDetail> createState() => _DetailState();
@@ -31,75 +32,83 @@ class _DetailState extends State<PasienDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Detail Pasien"),
-        backgroundColor: Colors.blueAccent,
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        title: const Text('Detail Pasien'),
+        backgroundColor: Colors.teal.shade700,
+        foregroundColor: Colors.white,
       ),
-      body: Column(
+      body: ListView(
+        padding: const EdgeInsets.all(16),
         children: [
-          SizedBox(height: 20),
-          Text("Nomor RM : ${_data.nomorRm}", style: TextStyle(fontSize: 20)),
-          SizedBox(height: 10),
-          Text("Nama : ${_data.nama}", style: TextStyle(fontSize: 20)),
-          SizedBox(height: 10),
-          Text("Tanggal Lahir (YYYY-MM-DD) : ${_data.tanggalLahir}", style: TextStyle(fontSize: 20)),
-          SizedBox(height: 10),
-          Text("Nomor Telepon : ${_data.nomorTelepon}", style: TextStyle(fontSize: 20)),
-          SizedBox(height: 10),
-          Text("Alamat : ${_data.alamat}", style: TextStyle(fontSize: 20)),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [_tombolUbah(), _tombolHapus()],
-          )
+          ListTile(
+            leading: const CircleAvatar(child: Icon(Icons.person_outline)),
+            title: Text(_data.nama),
+            subtitle: Text('No. RM: ${_data.nomorRm}'),
+          ),
+          const Divider(),
+          _info('Tanggal lahir', _data.tanggalLahir),
+          _info('Nomor telepon', _data.nomorTelepon),
+          _info('Alamat', _data.alamat),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.teal.shade700,
+            ),
+            onPressed: _ubahPasien,
+            icon: const Icon(Icons.edit),
+            label: const Text('Ubah'),
+          ),
+          FilledButton.icon(
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red.shade700,
+            ),
+            onPressed: _hapusPasien,
+            icon: const Icon(Icons.delete),
+            label: const Text('Hapus'),
+          ),
         ],
       ),
     );
   }
 
-  _tombolUbah() {
-    return ElevatedButton(
-        onPressed: () async {
-          final hasil = await Navigator.push<Pasien>(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PasienUpdateForm(pasien: _data)));
-          if (hasil != null) {
-            widget.onUbah(hasil);
-            setState(() => _data = hasil);
-          }
-        },
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
-        child: const Text("Ubah"));
+  Widget _info(String label, String value) {
+    return ListTile(
+      title: Text(label),
+      subtitle: Text(value.isEmpty ? '-' : value),
+    );
   }
 
-  _tombolHapus() {
-    return ElevatedButton(
-        onPressed: () {
-          AlertDialog alertDialog = AlertDialog(
-            content: const Text("Yakin ingin menghapus data ini?"),
-            actions: [
-              ElevatedButton(
-                onPressed: () {
-                  widget.onHapus(_data);
-                  Navigator.pop(context); // tutup dialog
-                  Navigator.pop(context); // kembali ke daftar
-                },
-                child: const Text("YA"),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("Tidak"),
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-              )
-            ],
-          );
-          showDialog(context: context, builder: (context) => alertDialog);
-        },
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-        child: const Text("Hapus"));
+  Future<void> _ubahPasien() async {
+    final hasil = await Navigator.push<Pasien>(
+      context,
+      MaterialPageRoute(builder: (_) => PasienUpdateForm(pasien: _data)),
+    );
+    if (hasil != null && mounted) {
+      widget.onUbah(hasil);
+      setState(() => _data = hasil);
+    }
+  }
+
+  Future<void> _hapusPasien() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Hapus Pasien'),
+        content: const Text('Yakin ingin menghapus data ini?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      widget.onHapus(_data);
+      Navigator.pop(context);
+    }
   }
 }

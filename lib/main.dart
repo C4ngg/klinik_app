@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ui/poli/poli_page.dart';
+import '../../ui/beranda_login/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
       ),
-      home: const PoliPage(),
+      home: const Login(),
     );
   }
 }

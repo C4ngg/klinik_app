@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import '../../model/pasien.dart';
 
 class PasienForm extends StatefulWidget {
-  const PasienForm({Key? key}) : super(key: key);
+  const PasienForm({super.key});
+
   @override
   State<PasienForm> createState() => _FormState();
 }
@@ -16,12 +18,22 @@ class _FormState extends State<PasienForm> {
   final _alamatCtrl = TextEditingController();
 
   @override
+  void dispose() {
+    _nomorRmCtrl.dispose();
+    _namaCtrl.dispose();
+    _tanggalLahirCtrl.dispose();
+    _nomorTeleponCtrl.dispose();
+    _alamatCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tambah Pasien"),
-        backgroundColor: Colors.blueAccent,
-        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        title: const Text('Tambah Pasien'),
+        backgroundColor: Colors.teal.shade700,
+        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -29,17 +41,36 @@ class _FormState extends State<PasienForm> {
           key: _formKey,
           child: Column(
             children: [
-              _field("Nomor RM", _nomorRmCtrl),
-              SizedBox(height: 20),
-              _field("Nama", _namaCtrl),
-              SizedBox(height: 20),
-              _field("Tanggal Lahir (YYYY-MM-DD)", _tanggalLahirCtrl),
-              SizedBox(height: 20),
-              _field("Nomor Telepon", _nomorTeleponCtrl),
-              SizedBox(height: 20),
-              _field("Alamat", _alamatCtrl),
-              SizedBox(height: 20),
-              _tombolSimpan()
+              _field('Nomor RM', _nomorRmCtrl),
+              _field('Nama', _namaCtrl),
+              _field('Tanggal Lahir (YYYY-MM-DD)', _tanggalLahirCtrl),
+              _field('Nomor Telepon', _nomorTeleponCtrl),
+              _field('Alamat', _alamatCtrl, maxLines: 3),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.teal.shade700,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () {
+                    if (!_formKey.currentState!.validate()) return;
+                    Navigator.pop(
+                      context,
+                      Pasien(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        nomorRm: _nomorRmCtrl.text.trim(),
+                        nama: _namaCtrl.text.trim(),
+                        tanggalLahir: _tanggalLahirCtrl.text.trim(),
+                        nomorTelepon: _nomorTeleponCtrl.text.trim(),
+                        alamat: _alamatCtrl.text.trim(),
+                      ),
+                    );
+                  },
+                  child: const Text('Simpan'),
+                ),
+              ),
             ],
           ),
         ),
@@ -47,25 +78,24 @@ class _FormState extends State<PasienForm> {
     );
   }
 
-  _field(String label, TextEditingController ctrl) {
-    return TextField(
-      decoration: InputDecoration(labelText: label),
-      controller: ctrl,
+  Widget _field(
+    String label,
+    TextEditingController controller, {
+    int maxLines = 1,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: TextFormField(
+        controller: controller,
+        maxLines: maxLines,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+        ),
+        validator: (value) => value == null || value.trim().isEmpty
+            ? '$label wajib diisi'
+            : null,
+      ),
     );
-  }
-
-  _tombolSimpan() {
-    return ElevatedButton(
-        onPressed: () {
-          Pasien x = Pasien(
-              id: DateTime.now().millisecondsSinceEpoch.toString(),
-              nomorRm: _nomorRmCtrl.text,
-              nama: _namaCtrl.text,
-              tanggalLahir: _tanggalLahirCtrl.text,
-              nomorTelepon: _nomorTeleponCtrl.text,
-              alamat: _alamatCtrl.text);
-          Navigator.pop(context, x);
-        },
-        child: const Text("Simpan"));
   }
 }

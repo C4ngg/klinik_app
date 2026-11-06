@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import '../../model/poli.dart';
 
 class PoliUpdateForm extends StatefulWidget {
+  const PoliUpdateForm({super.key, required this.poli});
+
   final Poli poli;
 
-  const PoliUpdateForm({Key? key, required this.poli}) : super(key: key);
-  _PoliUpdateFormState createState() => _PoliUpdateFormState();
+  @override
+  State<PoliUpdateForm> createState() => _PoliUpdateFormState();
 }
 
 class _PoliUpdateFormState extends State<PoliUpdateForm> {
@@ -16,45 +18,64 @@ class _PoliUpdateFormState extends State<PoliUpdateForm> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _namaPoliCtrl.text = widget.poli.namaPoli;
-    });
+    _namaPoliCtrl.text = widget.poli.namaPoli;
+  }
+
+  @override
+  void dispose() {
+    _namaPoliCtrl.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ubah Poli"),
-        backgroundColor: Colors.blueAccent,
-        titleTextStyle: const TextStyle(fontSize: 20, color: Colors.white, fontWeight: FontWeight.bold,
-        ),
+        title: const Text('Ubah Poli'),
+        backgroundColor: Colors.blue.shade700,
+        foregroundColor: Colors.white,
       ),
-      body: SingleChildScrollView(
+      body: Padding(
+        padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
-            children: [_fieldNamaPoli(), SizedBox(height: 20), _tombolSimpan()],
+            children: [
+              TextFormField(
+                controller: _namaPoliCtrl,
+                decoration: const InputDecoration(
+                  labelText: 'Nama Poli',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) => value == null || value.trim().isEmpty
+                    ? 'Nama poli wajib diisi'
+                    : null,
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue.shade700,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () {
+                    if (!_formKey.currentState!.validate()) return;
+                    Navigator.pop(
+                      context,
+                      Poli(
+                        id: widget.poli.id,
+                        namaPoli: _namaPoliCtrl.text.trim(),
+                      ),
+                    );
+                  },
+                  child: const Text('Simpan Perubahan'),
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
-
-  _fieldNamaPoli() {
-    return TextField(
-      decoration: const InputDecoration(labelText: "Nama Poli"),
-      controller: _namaPoliCtrl,
-    );
-  }
-
-  _tombolSimpan() {
-    return ElevatedButton(
-      onPressed: () {
-        final poli = Poli(namaPoli: _namaPoliCtrl.text);
-        Navigator.pop(context, poli);
-      },
-      child: const Text("Simpan Perubahan"),
     );
   }
 }
