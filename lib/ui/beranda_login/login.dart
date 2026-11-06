@@ -42,16 +42,6 @@ class _LoginState extends State<Login> {
                         child: Image.asset(
                           'assets/images/klinik_logo.png',
                           fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return ColoredBox(
-                              color: Colors.blue.shade700,
-                              child: const Icon(
-                                Icons.local_hospital_outlined,
-                                color: Colors.white,
-                                size: 38,
-                              ),
-                            );
-                          },
                         ),
                       ),
                     ),
