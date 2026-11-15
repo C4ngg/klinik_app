@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:klinik_app/widget/sidebar.dart';
+import 'package:klinik_app/widget/clinic_page_header.dart';
 
 import '../../model/pegawai.dart';
 import 'pegawai_form.dart';
@@ -65,68 +66,60 @@ class _PageState extends State<PegawaiPage> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: Colors.deepPurple.shade50,
       drawer: const Sidebar(),
-      appBar: AppBar(
-        title: const Text('Data Pegawai'),
-        backgroundColor: Colors.deepPurple.shade600,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            onPressed: _tambahPegawai,
-            icon: const Icon(Icons.add),
-            tooltip: 'Tambah pegawai',
-          ),
-        ],
+      appBar: AppBar(title: const Text('Pegawai')),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _tambahPegawai,
+        icon: const Icon(Icons.add),
+        label: const Text('Tambah pegawai'),
       ),
-      body: Column(
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Text(
-                  'Jumlah pegawai: ${_data.length}',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.deepPurple.shade800,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _searchController,
-                  onChanged: (value) =>
-                      setState(() => _query = value.trim().toLowerCase()),
-                  decoration: InputDecoration(
-                    labelText: 'Cari nama atau NIP',
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.deepPurple.shade600,
-                    ),
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
-              ],
+          ClinicPageHeader(
+            section: 'Tim klinik',
+            title: 'Data Pegawai',
+            description: 'Kelola informasi tenaga kerja dan kontak klinik.',
+            icon: Icons.badge_outlined,
+            accentColor: const Color(0xFFB2783F),
+            metric: 'Jumlah pegawai: ${_data.length}',
+          ),
+          const SizedBox(height: 20),
+          TextField(
+            controller: _searchController,
+            onChanged: (value) =>
+                setState(() => _query = value.trim().toLowerCase()),
+            decoration: const InputDecoration(
+              labelText: 'Cari nama atau NIP',
+              prefixIcon: Icon(Icons.search),
+              fillColor: Colors.white,
+              filled: true,
             ),
           ),
-          Expanded(
-            child: filteredData.isEmpty
-                ? const Center(child: Text('Data pegawai tidak ditemukan'))
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    itemCount: filteredData.length,
-                    itemBuilder: (context, index) => PegawaiItem(
-                      pegawai: filteredData[index],
-                      onUbah: _ubah,
-                      onHapus: (pegawai) => setState(
-                        () =>
-                            _data.removeWhere((item) => item.id == pegawai.id),
-                      ),
-                    ),
-                  ),
+          const SizedBox(height: 22),
+          Text(
+            'Daftar pegawai',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: const Color(0xFF183B3A),
+              fontWeight: FontWeight.w700,
+            ),
           ),
+          const SizedBox(height: 12),
+          if (filteredData.isEmpty)
+            const ClinicEmptyState(message: 'Data pegawai tidak ditemukan')
+          else
+            ...filteredData.map(
+              (pegawai) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: PegawaiItem(
+                  pegawai: pegawai,
+                  onUbah: _ubah,
+                  onHapus: (pegawai) => setState(
+                    () => _data.removeWhere((item) => item.id == pegawai.id),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

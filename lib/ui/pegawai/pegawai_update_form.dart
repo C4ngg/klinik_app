@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../model/pegawai.dart';
+import '../../widget/clinic_page_header.dart';
 
 class PegawaiUpdateForm extends StatefulWidget {
   const PegawaiUpdateForm({super.key, required this.pegawai});
@@ -45,59 +46,74 @@ class _UpdateFormState extends State<PegawaiUpdateForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ubah Pegawai'),
-        backgroundColor: Colors.deepPurple.shade600,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Ubah pegawai')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _field('NIP', _nipCtrl, keyboardType: TextInputType.number),
-              _field('Nama', _namaCtrl),
-              _field('Tanggal Lahir (YYYY-MM-DD)', _tanggalLahirCtrl),
-              _field(
-                'Nomor Telepon',
-                _nomorTeleponCtrl,
-                keyboardType: TextInputType.phone,
-              ),
-              _field(
-                'Email',
-                _emailCtrl,
-                keyboardType: TextInputType.emailAddress,
-                validator: _validateEmail,
-              ),
-              _field('Kata sandi', _passwordCtrl, obscureText: true),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple.shade600,
-                    foregroundColor: Colors.white,
-                  ),
-                  onPressed: () {
-                    if (!_formKey.currentState!.validate()) return;
-                    Navigator.pop(
-                      context,
-                      Pegawai(
-                        id: widget.pegawai.id,
-                        nip: _nipCtrl.text.trim(),
-                        nama: _namaCtrl.text.trim(),
-                        tanggalLahir: _tanggalLahirCtrl.text.trim(),
-                        nomorTelepon: _nomorTeleponCtrl.text.trim(),
-                        email: _emailCtrl.text.trim(),
-                        password: _passwordCtrl.text,
-                      ),
-                    );
-                  },
-                  child: const Text('Simpan Perubahan'),
+        padding: const EdgeInsets.all(20),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const ClinicPageHeader(
+                  section: 'Tim klinik',
+                  title: 'Ubah pegawai',
+                  description: 'Perbarui data pegawai yang sudah terdaftar.',
+                  icon: Icons.badge_outlined,
+                  accentColor: Color(0xFFB2783F),
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+                Form(
+                  key: _formKey,
+                  child: ClinicFormCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _field(
+                          'NIP',
+                          _nipCtrl,
+                          keyboardType: TextInputType.number,
+                        ),
+                        _field('Nama', _namaCtrl),
+                        _field('Tanggal Lahir (YYYY-MM-DD)', _tanggalLahirCtrl),
+                        _field(
+                          'Nomor Telepon',
+                          _nomorTeleponCtrl,
+                          keyboardType: TextInputType.phone,
+                        ),
+                        _field(
+                          'Email',
+                          _emailCtrl,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: _validateEmail,
+                        ),
+                        _field('Kata sandi', _passwordCtrl, obscureText: true),
+                        const SizedBox(height: 4),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            if (!_formKey.currentState!.validate()) return;
+                            Navigator.pop(
+                              context,
+                              Pegawai(
+                                id: widget.pegawai.id,
+                                nip: _nipCtrl.text.trim(),
+                                nama: _namaCtrl.text.trim(),
+                                tanggalLahir: _tanggalLahirCtrl.text.trim(),
+                                nomorTelepon: _nomorTeleponCtrl.text.trim(),
+                                email: _emailCtrl.text.trim(),
+                                password: _passwordCtrl.text,
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.check_rounded),
+                          label: const Text('Simpan perubahan'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -117,10 +133,7 @@ class _UpdateFormState extends State<PegawaiUpdateForm> {
         controller: controller,
         keyboardType: keyboardType,
         obscureText: obscureText,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
+        decoration: InputDecoration(labelText: label),
         validator:
             validator ??
             (value) => value == null || value.trim().isEmpty

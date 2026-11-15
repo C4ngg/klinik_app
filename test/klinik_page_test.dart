@@ -18,7 +18,7 @@ void main() {
 
     await tester.tap(find.text('Poli Anak'));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(FilledButton, 'Hapus').first);
+    await tester.tap(find.widgetWithText(FilledButton, 'Hapus data').first);
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FilledButton, 'Hapus').last);
     await tester.pumpAndSettle();

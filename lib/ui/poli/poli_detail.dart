@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../model/poli.dart';
+import '../../widget/clinic_page_header.dart';
 import 'poli_update_form.dart';
 
 class PoliDetail extends StatelessWidget {
-  const PoliDetail({
-    super.key,
-    required this.poli,
-    required this.onDeleted,
-  });
+  const PoliDetail({super.key, required this.poli, required this.onDeleted});
 
   final Poli poli;
   final VoidCallback onDeleted;
@@ -16,41 +13,48 @@ class PoliDetail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detail Poli'),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Detail poli')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         children: [
-          ListTile(
-            leading: const Icon(Icons.local_hospital_outlined),
-            title: const Text('Nama Poli'),
-            subtitle: Text(poli.namaPoli),
+          ClinicPageHeader(
+            section: 'Layanan klinik',
+            title: poli.namaPoli,
+            description: 'Informasi layanan poliklinik.',
+            icon: Icons.local_hospital_outlined,
+            accentColor: const Color(0xFF176B65),
           ),
-          const SizedBox(height: 16),
-          OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.blue.shade700,
+          const SizedBox(height: 20),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: const Color(0xFFE7EEEA)),
             ),
+            child: ClinicInfoRow(
+              icon: Icons.medical_services_outlined,
+              label: 'Nama poli',
+              value: poli.namaPoli,
+            ),
+          ),
+          const SizedBox(height: 20),
+          OutlinedButton.icon(
             onPressed: () async {
               final updated = await Navigator.push<Poli>(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => PoliUpdateForm(poli: poli),
-                ),
+                MaterialPageRoute(builder: (_) => PoliUpdateForm(poli: poli)),
               );
               if (updated != null && context.mounted) {
                 Navigator.pop(context, updated);
               }
             },
-            icon: const Icon(Icons.edit),
-            label: const Text('Ubah'),
+            icon: const Icon(Icons.edit_outlined),
+            label: const Text('Ubah data'),
           ),
+          const SizedBox(height: 10),
           FilledButton.icon(
             style: FilledButton.styleFrom(
-              backgroundColor: Colors.red.shade700,
+              backgroundColor: const Color(0xFFB94D45),
             ),
             onPressed: () async {
               final confirmed = await showDialog<bool>(
@@ -75,8 +79,8 @@ class PoliDetail extends StatelessWidget {
                 Navigator.pop(context);
               }
             },
-            icon: const Icon(Icons.delete),
-            label: const Text('Hapus'),
+            icon: const Icon(Icons.delete_outline),
+            label: const Text('Hapus data'),
           ),
         ],
       ),

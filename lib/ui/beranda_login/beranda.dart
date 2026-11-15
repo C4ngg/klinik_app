@@ -11,70 +11,172 @@ class Beranda extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const Sidebar(),
-      appBar: AppBar(
-        title: const Text('Beranda'),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Klinik Apps')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         children: [
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: const Color(0xFF176B65),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 11,
+                    vertical: 7,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'RUANG ADMIN',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'Selamat datang,\nAdmin.',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    height: 1.15,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'Semua kebutuhan pengelolaan klinik dalam satu tempat.',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.82),
+                    height: 1.45,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 28),
           Text(
-            'Selamat datang, Admin!',
-            style: Theme.of(context).textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 8),
-          const Text('Pilih menu untuk mengelola data klinik.'),
-          const SizedBox(height: 20),
-          Card(
-            color: Colors.blue.shade50,
-            child: ListTile(
-              leading: Icon(
-                Icons.local_hospital_outlined,
-                color: Colors.blue.shade700,
-              ),
-              title: const Text('Data Poli'),
-              subtitle: const Text('Kelola layanan poli klinik'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const PoliPage()),
-              ),
+            'Menu utama',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              color: const Color(0xFF183B3A),
+              fontWeight: FontWeight.w700,
             ),
           ),
-          Card(
-            color: Colors.teal.shade50,
-            child: ListTile(
-              leading: Icon(
-                Icons.badge_outlined,
-                color: Colors.teal.shade700,
-              ),
-              title: const Text('Data Pegawai'),
-              subtitle: const Text('Kelola data pegawai klinik'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const PegawaiPage()),
-              ),
+          const SizedBox(height: 14),
+          _MenuCard(
+            icon: Icons.local_hospital_outlined,
+            title: 'Data Poli',
+            subtitle: 'Kelola layanan poli klinik',
+            accentColor: const Color(0xFF176B65),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const PoliPage()),
             ),
           ),
-          Card(
-            color: Colors.deepPurple.shade50,
-            child: ListTile(
-              leading: Icon(
-                Icons.people_outline,
-                color: Colors.deepPurple.shade600,
-              ),
-              title: const Text('Data Pasien'),
-              subtitle: const Text('Kelola data pasien klinik'),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const PasienPage()),
-              ),
+          const SizedBox(height: 12),
+          _MenuCard(
+            icon: Icons.badge_outlined,
+            title: 'Data Pegawai',
+            subtitle: 'Kelola data pegawai klinik',
+            accentColor: const Color(0xFFB2783F),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const PegawaiPage()),
+            ),
+          ),
+          const SizedBox(height: 12),
+          _MenuCard(
+            icon: Icons.people_outline,
+            title: 'Data Pasien',
+            subtitle: 'Kelola data pasien klinik',
+            accentColor: const Color(0xFF5977A2),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const PasienPage()),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _MenuCard extends StatelessWidget {
+  const _MenuCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.accentColor,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Color accentColor;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: const Color(0xFFE7EEEA)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Icon(icon, color: accentColor),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: const Color(0xFF183B3A),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall
+                          ?.copyWith(color: const Color(0xFF71817D)),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(Icons.arrow_forward_ios, size: 15, color: accentColor),
+            ],
+          ),
+        ),
       ),
     );
   }

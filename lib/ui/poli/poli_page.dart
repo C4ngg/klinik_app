@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:klinik_app/widget/sidebar.dart';
+import 'package:klinik_app/widget/clinic_page_header.dart';
 
 import '../../model/poli.dart';
 import 'poli_form.dart';
@@ -43,72 +44,63 @@ class _PoliPageState extends State<PoliPage> {
         .toList();
 
     return Scaffold(
-      backgroundColor: Colors.blue.shade50,
       drawer: const Sidebar(),
-      appBar: AppBar(
-        title: const Text('Data Poli'),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            onPressed: _tambahPoli,
-            icon: const Icon(Icons.add),
-            tooltip: 'Tambah poli',
-          ),
-        ],
+      appBar: AppBar(title: const Text('Poli')),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _tambahPoli,
+        icon: const Icon(Icons.add),
+        label: const Text('Tambah poli'),
       ),
-      body: Column(
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Text(
-                  'Jumlah poli: ${_listPoli.length}',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.blue.shade800,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _searchController,
-                  onChanged: (value) => setState(
-                    () => _query = value.trim().toLowerCase(),
-                  ),
-                  decoration: InputDecoration(
-                    labelText: 'Cari poli',
-                    prefixIcon: Icon(Icons.search, color: Colors.blue.shade700),
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
-              ],
+          ClinicPageHeader(
+            section: 'Layanan klinik',
+            title: 'Data Poli',
+            description: 'Atur daftar layanan dan poliklinik klinik.',
+            icon: Icons.local_hospital_outlined,
+            accentColor: const Color(0xFF176B65),
+            metric: 'Jumlah poli: ${_listPoli.length}',
+          ),
+          const SizedBox(height: 20),
+          TextField(
+            controller: _searchController,
+            onChanged: (value) =>
+                setState(() => _query = value.trim().toLowerCase()),
+            decoration: const InputDecoration(
+              labelText: 'Cari poli',
+              prefixIcon: Icon(Icons.search),
+              fillColor: Colors.white,
+              filled: true,
             ),
           ),
-          Expanded(
-            child: filteredPoli.isEmpty
-                ? const Center(child: Text('Data poli tidak ditemukan'))
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    itemCount: filteredPoli.length,
-                    itemBuilder: (context, index) {
-                      final poli = filteredPoli[index];
-                      return PoliItem(
-                        poli: poli,
-                        onPoliUpdated: (updated) => setState(() {
-                          final originalIndex = _listPoli.indexOf(poli);
-                          if (originalIndex != -1) {
-                            _listPoli[originalIndex] = updated;
-                          }
-                        }),
-                        onPoliDeleted: () =>
-                            setState(() => _listPoli.remove(poli)),
-                      );
-                    },
-                  ),
+          const SizedBox(height: 22),
+          Text(
+            'Daftar layanan',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: const Color(0xFF183B3A),
+              fontWeight: FontWeight.w700,
+            ),
           ),
+          const SizedBox(height: 12),
+          if (filteredPoli.isEmpty)
+            const ClinicEmptyState(message: 'Data poli tidak ditemukan')
+          else
+            ...filteredPoli.map(
+              (poli) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: PoliItem(
+                  poli: poli,
+                  onPoliUpdated: (updated) => setState(() {
+                    final originalIndex = _listPoli.indexOf(poli);
+                    if (originalIndex != -1) {
+                      _listPoli[originalIndex] = updated;
+                    }
+                  }),
+                  onPoliDeleted: () => setState(() => _listPoli.remove(poli)),
+                ),
+              ),
+            ),
         ],
       ),
     );

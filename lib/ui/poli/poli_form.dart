@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../model/poli.dart';
+import '../../widget/clinic_page_header.dart';
 
 class PoliForm extends StatefulWidget {
   const PoliForm({super.key});
@@ -22,46 +23,58 @@ class _PoliFormState extends State<PoliForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tambah Poli'),
-        backgroundColor: Colors.blue.shade700,
-        foregroundColor: Colors.white,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _namaPoliCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Nama Poli',
-                  border: OutlineInputBorder(),
+      appBar: AppBar(title: const Text('Tambah poli')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const ClinicPageHeader(
+                  section: 'Layanan klinik',
+                  title: 'Tambah poli',
+                  description: 'Masukkan nama layanan yang akan ditambahkan.',
+                  icon: Icons.local_hospital_outlined,
+                  accentColor: Color(0xFF176B65),
                 ),
-                validator: (value) => value == null || value.trim().isEmpty
-                    ? 'Nama poli wajib diisi'
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue.shade700,
-                    foregroundColor: Colors.white,
+                const SizedBox(height: 20),
+                Form(
+                  key: _formKey,
+                  child: ClinicFormCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        TextFormField(
+                          controller: _namaPoliCtrl,
+                          decoration: const InputDecoration(
+                            labelText: 'Nama poli',
+                            prefixIcon: Icon(Icons.medical_services_outlined),
+                          ),
+                          validator: (value) =>
+                              value == null || value.trim().isEmpty
+                              ? 'Nama poli wajib diisi'
+                              : null,
+                        ),
+                        const SizedBox(height: 18),
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            if (!_formKey.currentState!.validate()) return;
+                            Navigator.pop(
+                              context,
+                              Poli(namaPoli: _namaPoliCtrl.text.trim()),
+                            );
+                          },
+                          icon: const Icon(Icons.check_rounded),
+                          label: const Text('Simpan poli'),
+                        ),
+                      ],
+                    ),
                   ),
-                  onPressed: () {
-                    if (!_formKey.currentState!.validate()) return;
-                    Navigator.pop(
-                      context,
-                      Poli(namaPoli: _namaPoliCtrl.text.trim()),
-                    );
-                  },
-                  child: const Text('Simpan'),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

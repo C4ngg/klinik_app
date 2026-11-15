@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:klinik_app/widget/sidebar.dart';
+import 'package:klinik_app/widget/clinic_page_header.dart';
 
 import '../../model/pasien.dart';
 import 'pasien_form.dart';
@@ -63,64 +64,60 @@ class _PageState extends State<PasienPage> {
     }).toList();
 
     return Scaffold(
-      backgroundColor: Colors.teal.shade50,
       drawer: const Sidebar(),
-      appBar: AppBar(
-        title: const Text('Data Pasien'),
-        backgroundColor: Colors.teal.shade700,
-        foregroundColor: Colors.white,
-        actions: [
-          IconButton(
-            onPressed: _tambahPasien,
-            icon: const Icon(Icons.add),
-            tooltip: 'Tambah pasien',
-          ),
-        ],
+      appBar: AppBar(title: const Text('Pasien')),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _tambahPasien,
+        icon: const Icon(Icons.add),
+        label: const Text('Tambah pasien'),
       ),
-      body: Column(
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Text(
-                  'Jumlah pasien: ${_data.length}',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: Colors.teal.shade800,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _searchController,
-                  onChanged: (value) => setState(
-                    () => _query = value.trim().toLowerCase(),
-                  ),
-                  decoration: InputDecoration(
-                    labelText: 'Cari nama atau nomor RM',
-                    prefixIcon: Icon(Icons.search, color: Colors.teal.shade700),
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                ),
-              ],
+          ClinicPageHeader(
+            section: 'Rekam medis',
+            title: 'Data Pasien',
+            description: 'Temukan dan perbarui informasi pasien klinik.',
+            icon: Icons.people_outline,
+            accentColor: const Color(0xFF5977A2),
+            metric: 'Jumlah pasien: ${_data.length}',
+          ),
+          const SizedBox(height: 20),
+          TextField(
+            controller: _searchController,
+            onChanged: (value) =>
+                setState(() => _query = value.trim().toLowerCase()),
+            decoration: const InputDecoration(
+              labelText: 'Cari nama atau nomor RM',
+              prefixIcon: Icon(Icons.search),
+              fillColor: Colors.white,
+              filled: true,
             ),
           ),
-          Expanded(
-            child: filteredData.isEmpty
-                ? const Center(child: Text('Data pasien tidak ditemukan'))
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    itemCount: filteredData.length,
-                    itemBuilder: (context, index) => PasienItem(
-                      pasien: filteredData[index],
-                      onUbah: _ubah,
-                      onHapus: (pasien) =>
-                          setState(() => _data.removeWhere((item) => item.id == pasien.id)),
-                    ),
-                  ),
+          const SizedBox(height: 22),
+          Text(
+            'Daftar pasien',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: const Color(0xFF183B3A),
+              fontWeight: FontWeight.w700,
+            ),
           ),
+          const SizedBox(height: 12),
+          if (filteredData.isEmpty)
+            const ClinicEmptyState(message: 'Data pasien tidak ditemukan')
+          else
+            ...filteredData.map(
+              (pasien) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: PasienItem(
+                  pasien: pasien,
+                  onUbah: _ubah,
+                  onHapus: (pasien) => setState(
+                    () => _data.removeWhere((item) => item.id == pasien.id),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
